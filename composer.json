@@ -1,0 +1,15 @@
+{
+    "name": "projekt/ilya-cms",
+    "authors": [
+        {
+            "name": "Ali mansoori",
+            "email": "alimanssouri221@gmail.com"
+        }
+    ],
+    "minimum-stability": "alpha",
+    "require": {
+        "apigen/apigen": "dev-master",
+        "roave/better-reflection": "dev-master#c87d856",
+        "phalcon/devtools": "~3.2"
+    }
+}
