@@ -10,6 +10,9 @@
 - [Controllers](#controllers)
 - [Sending output to a view](#sending-output-to-a-view)
 - [Designing a sign-up form](#designing-a-sign-up-form)
+- [Creating a Model](#creating-a-model)
+- [Setting a Database Connection](#setting-a-database-connection)
+- [Storing data using models](#storing-data-using-models)
 
 ## File structure
 A key feature of Phalcon is it's loosly coupled, you can build a Phalcon project with a directory structure that is convenient for
@@ -260,3 +263,132 @@ The empty index action gives the clean pass to a view with the form definition `
 </form>
 ```
 Viewing the form in your browser.
+
+By clicking the "Send" button, you will notice an exception thrown from the framework, indicating that we are missing the `register` action in the controller `signup`. Our `public/index.php` file throws this exception:
+```php
+Exception: Action "register" was not found on handler "signup"
+```
+Implementing that method will remove the exception:
+
+`app/controllers/SignupController.php`
+```php
+<?php
+
+use Phalcon\Mvc\Controller;
+
+class SignupController extends Controller
+{
+    public function indexAction()
+    {
+
+    }
+
+    public function registerAction()
+    {
+
+    }
+}
+```
+If you click the "Send" button again, you will see a blank page. The name and email input provided by the user should be stored in a database. According to MVC guidelines, database interactions must be done through models so as to ensure clean object-oriented code.
+
+## Creating a Model
+Phalcon brings the first ORM for PHP entirely written in C-language. Instead of increasing the complexity of development, it simplifies it.
+
+Before creating our first model, we need to create a database table outside of Phalcon to map it to. A simple table to store registered users can be created like this:
+
+`create_users_table.sql`
+```mysql
+CREATE TABLE `users` (
+    `id`    int(10)     unsigned NOT NULL AUTO_INCREMENT,
+    `name`  varchar(70)          NOT NULL,
+    `email` varchar(70)          NOT NULL,
+
+    PRIMARY KEY (`id`)
+);
+```
+A model should be located in the `app/models` directory `(app/models/Users.php)`. The model maps to the "users" table:
+
+`app/models/Users.php`
+```php
+<?php
+
+use Phalcon\Mvc\Model;
+
+class Users extends Model
+{
+    public $id;
+    public $name;
+    public $email;
+}
+```
+## Setting a Database Connection
+In order to use a database connection and subsequently access data through our models, we need to specify it in our bootstrap process. A database connection is just another service that our application has that can be used for several components:
+
+`public/index.php`
+```php
+<?php
+
+use Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
+
+// Setup the database service
+$di->set(
+    'db',
+    function () {
+        return new DbAdapter(
+            [
+                'host'     => '127.0.0.1',
+                'username' => 'root',
+                'password' => '',
+                'dbname'   => 'dbname',
+            ]
+        );
+    }
+);
+```
+With the correct database parameters, our models are ready to work and interact with the rest of the application.
+
+## Storing data using models
+`app/controllers/SignupController.php`
+```php
+<?php
+
+use Phalcon\Mvc\Controller;
+
+class SignupController extends Controller
+{
+    public function indexAction()
+    {
+
+    }
+
+    public function registerAction()
+    {
+        $user = new Users();
+
+        // Store and check for errors
+        $success = $user->save(
+            $this->request->getPost(),
+            [
+                "name",
+                "email",
+            ]
+        );
+
+        if ($success) {
+            echo "Thanks for registering!";
+        } else {
+            echo "Sorry, the following problems were generated: ";
+
+            $messages = $user->getMessages();
+
+            foreach ($messages as $message) {
+                echo $message->getMessage(), "<br/>";
+            }
+        }
+
+        $this->view->disable();
+    }
+}
+```
+
+The End Lesson 1
