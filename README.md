@@ -195,3 +195,9 @@ class IndexController extends Controller
 }
 ```
 See output!
+
+### Sending output to a view
+create Dir => `app/views/index/index.phtml` for `IndexController.php` file
+```php
+<?php echo "<h1>Hello!</h1>";
+```
