@@ -6,7 +6,10 @@
  * Time: 11:13 AM
  */
 
-class SignupController
+class SignupController extends \Phalcon\Mvc\Controller
 {
+    public function indexAction()
+    {
 
+    }
 }
