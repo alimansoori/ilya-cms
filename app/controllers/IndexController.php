@@ -6,7 +6,10 @@
  * Time: 11:13 AM
  */
 
-class IndexController
+class IndexController extends \Phalcon\Mvc\Controller
 {
-
+    public function indexAction()
+    {
+        echo '<h1>Hello!</h1>';
+    }
 }

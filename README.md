@@ -176,3 +176,22 @@ $response = $application->handle();
 $response->send();
 ```
 The MVC Application was completed in less than 30 lines of code.
+
+## Controllers
+By default Phalcon will look for a controller named `IndexController`.
+
+`app/controllers/IndexController.php`
+```php
+<?php
+
+use Phalcon\Mvc\Controller;
+
+class IndexController extends Controller
+{
+    public function indexAction()
+    {
+        echo '<h1>Hello!</h1>';
+    }
+}
+```
+See output!
