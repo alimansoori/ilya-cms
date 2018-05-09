@@ -6,6 +6,7 @@
     - [Directory under the main Document Root](#directory-under-the-main-document-root)
 - [Bootstrap](#bootstrap)
     - [Autoloaders](#autoloaders)
+    - [Services](#services)
 
 ## File structure
 A key feature of Phalcon is it's loosly coupled, you can build a Phalcon project with a directory structure that is convenient for
@@ -90,3 +91,88 @@ $loader->registerDirs(
 
 $loader->register();
 ```
+
+### Services
+
+**Dependency Management**
+
+Phalcon's IoC container consists of the following concepts:
+- Service Container: a "bag" where we globally store the services that our application needs to function.
+- Service or Component: Data processing object which will be injected into components
+
+Each time the framework requires a component or service, it will ask the container using an agreed upon name for the service.
+
+**Instante DI**
+```php
+public/index.php
+
+<?php
+
+use Phalcon\Di\FactoryDefault;
+
+// ...
+
+// Create a DI
+$di = new FactoryDefault();
+```
+
+**register the "view" service**
+
+In the next part, we register the "view" service indicating the directory where the framework will find the views files. As the views do not correspond to classes, they cannot be charged with an autoloader.
+```php
+public/index.php
+
+<?php
+
+use Phalcon\Mvc\View;
+
+// ...
+
+// Setup the view component
+$di->set(
+    'view',
+    function () {
+        $view = new View();
+        $view->setViewsDir(APP_PATH . '/views/');
+        return $view;
+    }
+);
+```
+**Register a base URI**
+```php
+public/index.php
+
+<?php
+
+use Phalcon\Mvc\Url as UrlProvider;
+
+// ...
+
+// Setup a base URI
+$di->set(
+    'url',
+    function () {
+        $url = new UrlProvider();
+        $url->setBaseUri('/');
+        return $url;
+    }
+);
+```
+**Handling the application request**
+
+In the last part of this file, we find Phalcon\Mvc\Application. Its purpose is to initialize the request environment, route the incoming request, and then dispatch any discovered actions; it aggregates any responses and returns them when the process is complete.
+
+```php
+public/index.php
+
+<?php
+
+use Phalcon\Mvc\Application;
+
+// ...
+
+$application = new Application($di);
+$response = $application->handle();
+$response->send();
+```
+The MVC Application was completed in less than 30 lines of code.
