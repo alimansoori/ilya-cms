@@ -7,6 +7,9 @@
 - [Bootstrap](#bootstrap)
     - [Autoloaders](#autoloaders)
     - [Services](#services)
+- [Controllers](#controllers)
+- [Sending output to a view](#sending-output-to-a-view)
+- [Designing a sign-up form](#designing-a-sign-up-form)
 
 ## File structure
 A key feature of Phalcon is it's loosly coupled, you can build a Phalcon project with a directory structure that is convenient for
@@ -201,3 +204,59 @@ create Dir => `app/views/index/index.phtml` for `IndexController.php` file
 ```php
 <?php echo "<h1>Hello!</h1>";
 ```
+
+## Designing a sign-up form
+Now we will change the `index.phtml` view file, to add a link to a new controller named "signup". The goal is to allow users to sign up within our application.
+
+`app/views/index/index.phtml`
+```php
+<?php
+
+echo "<h1>Hello!</h1>";
+
+echo PHP_EOL;
+
+echo PHP_EOL;
+
+echo $this->tag->linkTo(
+    'signup',
+    'Sign Up Here!'
+);
+```
+Here is the Signup controller `(app/controllers/SignupController.php)`:
+```php
+<?php
+
+use Phalcon\Mvc\Controller;
+
+class SignupController extends Controller
+{
+    public function indexAction()
+    {
+
+    }
+}
+```
+The empty index action gives the clean pass to a view with the form definition `(app/views/signup/index.phtml)`:
+```php
+<h2>Sign up using this form</h2>
+
+<?php echo $this->tag->form("signup/register"); ?>
+
+    <p>
+        <label for="name">Name</label>
+        <?php echo $this->tag->textField("name"); ?>
+    </p>
+
+    <p>
+        <label for="email">E-Mail</label>
+        <?php echo $this->tag->textField("email"); ?>
+    </p>
+
+    <p>
+        <?php echo $this->tag->submitButton("Register"); ?>
+    </p>
+
+</form>
+```
+Viewing the form in your browser.

@@ -34,7 +34,7 @@ $di->set('view', function () {
 // Setup a base Url
 $di->set('url', function () {
     $url = new \Phalcon\Mvc\Url();
-    $url->setBaseUri('/ilya-cms');
+    $url->setBaseUri('/ilya-cms/');
 
     return $url;
 });
